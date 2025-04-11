@@ -3,91 +3,129 @@ package org.example.exercises;
 import java.util.Arrays;
 
 public class OlxApp {
-	
-	public Item[] items;
 
-	public OlxApp(Item[] items) {
-		this.items = items;
-	}
+    public static final String COLD_PLAY_CONCERT_PASSES = "ColdPlay concert passes";
+    public static final String AGED_WINE = "Aged Wine";
+    public static final String POKEMON_GO = "PokemonGo";
+    public Item[] items;
 
-	public static void main(String[] args) {
+    public OlxApp(Item[] items) {
+        this.items = items;
+    }
 
-		Item[] items = new Item[] { 
-							new Item("Mangoes", 10, 20)
-					   };
+    public static void main(String[] args) {
 
-		OlxApp app = new OlxApp(items);
+        Item[] items = new Item[]{
+                new Item("Mangoes", 10, 20)
+        };
 
-		app.updateQuality();
+        OlxApp app = new OlxApp(items);
 
-		System.out.println(app);
+        app.updateQuality();
 
-	}
+        System.out.println(app);
 
-	public void updateQuality() {
-		for (int i = 0; i < items.length; i++) {
-			if (items[i].name != "Aged Wine" && items[i].name != "ColdPlay concert passes") {
-				if (items[i].quality > 0) {
-					if (items[i].name != "PokemonGo") {
-						items[i].quality = items[i].quality - 1;
-					}
-				}
-			} else {
-				// This part handles the items for which quality can increase
-				// "ColdPlay concert passes" and "Aged Wine"
+    }
 
-				if (items[i].quality < 50) {
-					items[i].quality = items[i].quality + 1;
+    public void updateQuality() {
+        for (Item item : items) {
+            updateSellIn(item);
+            if (isDepreciatingItem(item)) {
+                updateDepreciatingItem(item);
+            }
+            else if(isVeblenItem(item)) {
+                updateVeblenItem(item);
+            }
 
-					if (items[i].name == "ColdPlay concert passes") {
-						if (items[i].sellIn < 11) {
-							if (items[i].quality < 50) {
-								items[i].quality = items[i].quality + 1;
-							}
-						}
+            // Everything except for Sulfuras the sellIn Decreases
 
-						if (items[i].sellIn < 6) {
-							if (items[i].quality < 50) {
-								items[i].quality = items[i].quality + 1;
-							}
-						}
-					}
-				}
-			}
 
-			// Everything except for Sulfuras the sellIn Decreases
-			if (items[i].name != "PokemonGo") {
-				items[i].sellIn = items[i].sellIn - 1;
-			}
+            if (item.sellIn < 0) {
+                if (!item.name.equals(AGED_WINE)) {
 
-			if (items[i].sellIn < 0) {
-				if (items[i].name != "Aged Wine") {
+                    if (!item.name.equals(COLD_PLAY_CONCERT_PASSES)) {
+                        if (item.quality > 0) {
+                            if (!isStaticItem(item)) {
+                                item.quality = item.quality - 1;
+                            }
+                        }
+                    } else {
+                        // For Backstage passes with sellin less than zero
+                        // quality is set to zero
+                        item.quality = 0;
+                    }
+                } else {
+                    // For Aged Wine below 50 quality increases actually by 2
+                    // In the previous line
+                    if (item.quality < 50) {
+                        item.quality = item.quality + 1;
+                    }
+                }
+            }
+        }
+    }
 
-					if (items[i].name != "ColdPlay concert passes") {
-						if (items[i].quality > 0) {
-							if (items[i].name != "PokemonGo") {
-								items[i].quality = items[i].quality - 1;
-							}
-						}
-					} else {
-						// For Backstage passes with sellin less than zero
-						// quality is set to zero
-						items[i].quality = 0;
-					}
-				} else {
-					// For Aged Wine below 50 quality increases actually by 2
-					// In the previous line
-					if (items[i].quality < 50) {
-						items[i].quality = items[i].quality + 1;
-					}
-				}
-			}
-		}
-	}
+    private static void updateVeblenItem(Item item) {
+        if (item.quality >= 50) {
+            item.quality = item.quality + 1;
 
-	@Override
-	public String toString() {
-		return Arrays.toString(items);
-	}
+            if (item.name.equals(COLD_PLAY_CONCERT_PASSES)) {
+                if (item.sellIn <= 10) {
+                    if (item.quality < 50) {
+                        item.quality = item.quality + 1;
+                    }
+                }
+                if (item.sellIn <= 5) {
+                    if (item.quality < 50) {
+                        item.quality = item.quality + 1;
+                    }
+                }
+            }
+        }
+        if (item.sellIn < 0){
+            if (item.name.equals(COLD_PLAY_CONCERT_PASSES)) {
+                if (item.quality > 0) {
+                    item.quality = 0;
+                }
+            }
+            if(item.name.equals(AGED_WINE)){
+                item.quality  = item.quality + 1;
+            }
+        }
+    }
+
+    private static void updateDepreciatingItem(Item item) {
+        if (item.quality > 0) {
+            item.quality = item.quality - 1;
+        }
+        if(item.sellIn <= 0) {
+            if (item.quality > 0) {
+                item.quality = item.quality - 1;
+            }
+        }
+    }
+
+    private static void updateSellIn(Item item) {
+        if (!isStaticItem(item)) {
+            item.sellIn = item.sellIn - 1;
+        }
+    }
+
+    private static boolean isDepreciatingItem(Item item) {
+        return !(isVeblenItem(item) || isStaticItem(item));
+    }
+
+    private static boolean isStaticItem(Item item) {
+        return item.name.equals(POKEMON_GO);
+    }
+
+    private static boolean isVeblenItem(Item item) {
+        return item.name.equals(AGED_WINE) || item.name.equals(COLD_PLAY_CONCERT_PASSES);
+    }
+
+    @Override
+    public String toString() {
+        return Arrays.toString(items);
+    }
 
 }
