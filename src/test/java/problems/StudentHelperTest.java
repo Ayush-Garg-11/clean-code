@@ -3,7 +3,7 @@ package problems;
 import org.example.basic.StudentHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class StudentHelperTest {
@@ -12,20 +12,20 @@ public class StudentHelperTest {
 	
 	@Test
 	public void testIsGradeB() {
-		assertEquals(false,helper.isGradeB(30, false));
-		assertEquals(false,helper.isGradeB(50, false));
-		assertEquals(true,helper.isGradeB(51, false));
-		assertEquals(true,helper.isGradeB(80, false));
-		assertEquals(false,helper.isGradeB(81, false));
-		
-		assertEquals(false,helper.isGradeB(30, true));
-		assertEquals(false,helper.isGradeB(50, true));
-		assertEquals(true,helper.isGradeB(51, true));
-		assertEquals(true,helper.isGradeB(80, true));
-		assertEquals(true,helper.isGradeB(81, true));
-		assertEquals(true,helper.isGradeB(89, true));
-		assertEquals(true,helper.isGradeB(90, true));
-		assertEquals(false,helper.isGradeB(91, true));
+        assertFalse(helper.isGradeB(30, false));
+        assertFalse(helper.isGradeB(50, false));
+        assertTrue(helper.isGradeB(51, false));
+        assertTrue(helper.isGradeB(80, false));
+        assertFalse(helper.isGradeB(81, false));
+
+        assertFalse(helper.isGradeB(30, true));
+        assertFalse(helper.isGradeB(50, true));
+        assertTrue(helper.isGradeB(51, true));
+        assertTrue(helper.isGradeB(80, true));
+        assertTrue(helper.isGradeB(81, true));
+        assertTrue(helper.isGradeB(89, true));
+        assertTrue(helper.isGradeB(90, true));
+        assertFalse(helper.isGradeB(91, true));
 
 	}
 
